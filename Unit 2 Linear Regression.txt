@@ -1,0 +1,284 @@
+The Statistical Sommelier: An Introduction to Linear Regression > Quick Question
+
+Quick Question #1
+
+(1/1 point)
+The plots below show the relationship between two of the independent variables considered by Ashenfelter and the price of wine.
+What is the correct relationship between harvest rain, average growing season temperature, and wine prices?
+1) More harvest rain is associated with a higher price, and higher temperatures is associated with a higher price  
+More harvest rain is associated with a higher price, and higher temperatures is associated with a lower price  
+More harvest rain is associated with a lower price, and higher temperatures is associated with a higher price - correct  
+More harvest rain is associated with a lower price, and higher temperatures is associated with a lower price
+
+========================================================================================================================================================================
+
+
+Facts:
+1) The baseline model (BM) predicts the average value of the dependent variable regardless of the value of the independent variable.
+2) SSE (Sum of squared errors): (Error on first data point)^2 + (Error on second data point)^2 + (Error on third data point)^2 + ….. + (Error on N data point)^2. Error on any node is the difference between our prediction(via curve/line) and the actual value on the graph(dependent variable). Calculations are based on the predicted values/cost h(theta) or predicted dependent variable (y)
+In R it is calcualted as SSE = sum(model1$residuals^2) where model1 = lm(dependent_variable ~ independent_variable, data=<dataset>)
+3) Root Mean Square Error: square root of (SSE/N)
+4) SST (total sum of squares): Is the sum of the squares of difference between each dependent variable and the Baseline Model. So in univariate linear regression with observations as (x1,y1), (x2,y2), (x3,y3) with x being independent variable and y being dependent. The BM would be mean of y i.e. ym = (y1 + y2 + y3)/3 and SST would be (y1-ym)^2 + (y2-ym)^2 + (y3-ym)^2. Calculations are based on the existing/shared observation's dependent variable (y).
+5) R-squared: 1 – (SSE/SST). For a best model/curve SSE would be zero and R-squared would be one.
+
+========================================================================================================================================================================
+
+Quick Question #2
+
+(4/4 points)
+The following figure shows three data points and the best fit line
+
+y = 3x + 2.
+
+The x-coordinate, or "x", is our independent variable and the y-coordinate, or "y", is our dependent variable.
+(0,2),(1,2),(1,8)
+
+Please answer the following questions using this figure.
+
+What is the baseline prediction?
+Ans: It is the mean of the dependent variable: (2+2+8)/3
+4 - correct
+ 
+What is the Sum of Squared Errors (SSE)?
+Ans: The chosen line is y = 3x+2. So for the given data points/observations (0,2),(1,2),(1,8) the line predicts (0,2),(1,5),(1,5)
+The SSE is sum of squared predictions errors, which is (2-2)^2 + (2-5)^2 + (2-8)^2 = 0 + 9 + 9 = 18
+18 -  correct
+
+What is the Total Sum of Squares (SST) ?
+Ans: given set of observations - BM i.e.  (2-4)^2 + (2-4)^2 + (8-4)^2 = 4 + 4 + 16 = 24
+
+24 - correct
+
+What is the R² of the model?
+Ans: 1 - (SSE/SST) = 1 - (18/24)
+
+0.25 -  correct
+
+========================================================================================================================================================================
+
+Quick Question #3
+
+(1/1 point)
+Suppose we add another variable, Average Winter Temperature, to our model to predict wine price. Is it possible for the model's R² value to go down from 0.83 to 0.80?
+
+ No, the model's R² value can only decrease to 0.81 by adding new variables.  
+ No, the model's R² value can not decrease at all by adding new variables.  - correct  No, the model's R² value can not decrease at all by adding new variables.
+ Yes, the R² value could decrease to 0.80.
+
+Ans: It is because adding more variables means adding more data to it which should only increase the efficiency, if at all.
+========================================================================================================================================================================
+
+Quick Question #4
+
+(3/3 points)
+In R, use the dataset wine.csv to create a linear regression model to predict Price using HarvestRain and WinterRain as independent variables. Using the summary output of this model, answer the following questions:
+Ans: Queries are:
+wine = read.csv("wine.csv")
+model1 = lm(Price ~ HarvestRain + WinterRain, data=wine)
+summary(model1)
+
+
+What is the "Multiple R-squared" value of your model?
+0.3177
+ correct
+ 
+What is the coefficient for HarvestRain?
+-4.971e-03
+ correct
+
+What is the intercept coefficient?
+7.865e+00
+ correct
+========================================================================================================================================================================
+
+
+Quick Question #5
+
+(2/2 points)
+Use the dataset wine.csv to create a linear regression model to predict Price using HarvestRain and WinterRain as independent variables, like you did in the previous quick question. Using the summary output of this model, answer the following questions:
+-------------------------------------------------------------------------------------------
+wine = read.csv("wine.csv")
+model1 = lm(Price ~ HarvestRain + WinterRain, data=wine)
+summary(model1)
+
+Call:
+lm(formula = Price ~ HarvestRain + WinterRain, data = wine)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.0933 -0.3222 -0.1012  0.3871  1.1877 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  7.865e+00  6.616e-01  11.888 4.76e-11 ***
+HarvestRain -4.971e-03  1.601e-03  -3.105  0.00516 ** 
+WinterRain  -9.848e-05  9.007e-04  -0.109  0.91392    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.5611 on 22 degrees of freedom
+Multiple R-squared:  0.3177,    Adjusted R-squared:  0.2557 
+F-statistic: 5.122 on 2 and 22 DF,  p-value: 0.01492
+-------------------------------------------------------------------------------------------
+
+
+Is the coefficient for HarvestRain significant?  Yes - correct  
+No  I can't answer this question using the summary output.
+
+Is the coefficient for WinterRain significant? No - correct  
+I can't answer this question using the summary output.
+
+========================================================================================================================================================================
+
+Quick Question #6
+
+(1/1 point)
+Using the data set wine.csv, what is the correlation between HarvestRain and WinterRain?
+Ans: Use either of cor(wine) or cor(wine$WinterRain, wine$HarvestRain)
+
+-0.275440854 Correct
+
+
+========================================================================================================================================================================
+
+Quick Question #7
+
+(1/1 point)
+Which of the following are NOT valid values for an out-of-sample (test set) R² ? Select all that apply.
+
+ -7.0  -0.3  0.0  0.6  1.0  2.4
+
+Ans 2.4 
+(Need to check against 1-SSE/SST. Since SSE and SST are squared values so they can't be negative hence 1- SSE/SST can never be more than 1)
+
+
+========================================================================================================================================================================
+
+Quick Question #8
+
+(1/1 point)
+If a baseball team scores 713 runs and allows 614 runs, how many games do we expect the team to win?
+
+Using the linear regression model constructed during the lecture, enter the number of games we expect the team to win:
+
+Ans: W = 80.8814 + 0.1058 * RD = 80.8814 + 0.1058 * (713 - 614) = 80.8814 + 0.1058 * 99 = 91.3556
+91.3556 - correct
+
+========================================================================================================================================================================
+
+Quick Question #9
+
+(2/2 points)
+If a baseball team's OBP is 0.311 and SLG is 0.405, how many runs do we expect the team to score?
+
+Using the linear regression model constructed during the lecture (the one that uses OBP and SLG as independent variables), enter the number of runs we expect the team to score:
+
+Ans: -804.63+2737.77*(0.311)+1584.91*(0.405) = 688.70502
+
+688.70502  correct
+
+
+If a baseball team's opponents OBP (OOBP) is 0.297 and oppenents SLG (OSLG) is 0.370, how many runs do we expect the team to allow?
+
+Using the linear regression model discussed during the lecture (the one on the last slide of the previous video), enter the number of runs we expect the team to allow:
+Ans: 0-837.38+2913.60*(0.297)+1524.29*(0.370) = 591.9465
+
+591.9465 - correct
+
+========================================================================================================================================================================
+
+Quick Question #10
+
+(1 point possible)
+Suppose you are the General Manager of a baseball team, and you are selecting TWO players for your team. You have a budget of $1,500,000, and you have the choice between the following players:
+
+Player Name	OBP	SLG	Salary
+Eric Chavez	0.338	0.540	$1,400,000
+Jeremy Giambi	0.391	0.450	$1,065,000
+Frank Menechino	0.369	0.374	$295,000
+Greg Myers	0.313	0.447	$800,000
+Carlos Pena	0.361	0.500	$300,000
+Given your budget and the player statistics, which TWO players would you select?
+
+ Eric Chavez  Jeremy Giambi  Frank Menechino  Greg Myers  Carlos Pena
+ 
+ Ans:
+ Player			Calculation					RunScored	Price		Selected
+ Greg Myers		0-804.63+2737.77*(0.313)+1584.91*(0.447)	760.74678	$800,000 	
+ Frank Menechino	0-804.63+2737.77*(0.369)+1584.91*(0.374)	798.36347	$295,000 	
+ Carlos Pena		0-804.63+2737.77*(0.361)+1584.91*(0.500)	976.15997	$300,000 	2
+ Eric Chavez		0-804.63+2737.77*(0.338)+1584.91*(0.540)	976.58766	$1,400,000 	
+ Jeremy Giambi		0-804.63+2737.77*(0.391)+1584.91*(0.450)	979.04757	$1,065,000 	1
+
+Jeremy and Carlos seems good scoring economical players.
+
+========================================================================================================================================================================
+
+Quick Question #11
+
+In 2012 and 2013, there were 10 teams in the MLB playoffs: the six teams that had the most wins in each baseball division, and four "wild card" teams. The playoffs start between the four wild card teams - the two teams that win proceed in the playoffs (8 teams remaining). Then, these teams are paired off and play a series of games. The four teams that win are then paired and play to determine who will play in the World Series. 
+
+We can assign rankings to the teams as follows:
+
+Rank 1: the team that won the World Series
+Rank 2: the team that lost the World Series
+Rank 3: the two teams that lost to the teams in the World Series
+Rank 4: the four teams that made it past the wild card round, but lost to the above four teams
+Rank 5: the two teams that lost the wild card round
+In your R console, create a corresponding rank vector by typing
+
+teamRank = c(1,2,3,3,4,4,4,4,5,5)
+
+In this quick question, we'll see how well these rankings correlate with the regular season wins of the teams. In 2012, the ranking of the teams and their regular season wins were as follows:
+
+Rank 1: San Francisco Giants (Wins = 94)
+Rank 2: Detroit Tigers (Wins = 88)
+Rank 3: New York Yankees (Wins = 95), and St. Louis Cardinals (Wins = 88)
+Rank 4: Baltimore Orioles (Wins = 93), Oakland A's (Wins = 94), Washington Nationals (Wins = 98), Cincinnati Reds (Wins = 97)
+Rank 5: Texas Rangers (Wins = 93), and Atlanta Braves (Wins = 94) 
+Create a vector in R called wins2012, that has the wins of each team in 2012, in order of rank (the vector should have 10 numbers).
+
+In 2013, the ranking of the teams and their regular season wins were as follows:
+
+Rank 1: Boston Red Sox (Wins = 97)
+Rank 2: St. Louis Cardinals (Wins = 97)
+Rank 3: Los Angeles Dodgers (Wins = 92), and Detroit Tigers (Wins = 93)
+Rank 4: Tampa Bay Rays (Wins = 92), Oakland A's (Wins = 96), Pittsburgh Pirates (Wins = 94), and Atlanta Braves (Wins = 96)
+Rank 5: Cleveland Indians (Wins = 92), and Cincinnati Reds (Wins = 90) 
+Create another vector in R called wins2013, that has the wins of each team in 2013, in order of rank (the vector should have 10 numbers).
+
+Ans:> teamRank = c(1,2,3,3,4,4,4,4,5,5)
+> wins2012 = c(94,88,95,88,93,94,98,97,93,94)
+> wins2013 = c(97,97,92,93,92,96,94,96,92,90)
+
+
+
+Quick Question
+
+(2/2 points)
+What is the correlation between teamRank and wins2012?
+Ans: > cor(teamRank,wins2012)
+[1] 0.3477129
+
+0.3477129  correct
+
+What is the correlation between teamRank and wins2013?
+Ans: > cor(teamRank,wins2013)
+[1] -0.6556945
+
+-0.6556945  correct
+
+========================================================================================================================================================================
+
+Quick Question #12
+
+(1/1 point)
+Which of the following is MOST LIKELY to be a topic of Sabermetric research?
+
+ Evaluating how the attitude of managers influences player performance  
+ Determining the correlation between scouting predictions and player performance  
+ Predicting how many home runs the Oakland A's will hit next year  - correct
+ 
+Ans:  The third option is more quantitative while others are qualitative
+ 
+ ========================================================================================================================================================================
