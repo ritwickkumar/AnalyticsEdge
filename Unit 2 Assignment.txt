@@ -87,20 +87,1081 @@ Which of the following is the simplest correct explanation for this contradictio
  
  Ans: All of the gas concentration variables reflect human development - N2O and CFC.11 are correlated with other variables in the data set.  - correct
  Use cor(climate_training)
+ > cor(climate_training)
+                Year         Month           MEI         CO2         CH4         N2O      CFC.11        CFC.12         TSI    Aerosols        Temp
+Year      1.00000000 -0.0279419602 -0.0369876842  0.98274939  0.91565945  0.99384523  0.56910643  0.8970116635  0.17030201 -0.34524670  0.78679714
+Month    -0.02794196  1.0000000000  0.0008846905 -0.10673246  0.01856866  0.01363153 -0.01311122  0.0006751102 -0.03460619  0.01488954 -0.09985674
+MEI      -0.03698768  0.0008846905  1.0000000000 -0.04114717 -0.03341930 -0.05081978  0.06900044  0.0082855443 -0.15449192  0.34023779  0.17247075
+CO2       0.98274939 -0.1067324607 -0.0411471651  1.00000000  0.87727963  0.97671982  0.51405975  0.8526896272  0.17742893 -0.35615480  0.78852921
+CH4       0.91565945  0.0185686624 -0.0334193014  0.87727963  1.00000000  0.89983864  0.77990402  0.9636162478  0.24552844 -0.26780919  0.70325502
+N2O       0.99384523  0.0136315303 -0.0508197755  0.97671982  0.89983864  1.00000000  0.52247732  0.8679307757  0.19975668 -0.33705457  0.77863893
+CFC.11    0.56910643 -0.0131112236  0.0690004387  0.51405975  0.77990402  0.52247732  1.00000000  0.8689851828  0.27204596 -0.04392120  0.40771029
+CFC.12    0.89701166  0.0006751102  0.0082855443  0.85268963  0.96361625  0.86793078  0.86898518  1.0000000000  0.25530281 -0.22513124  0.68755755
+TSI       0.17030201 -0.0346061935 -0.1544919227  0.17742893  0.24552844  0.19975668  0.27204596  0.2553028138  1.00000000  0.05211651  0.24338269
+Aerosols -0.34524670  0.0148895406  0.3402377871 -0.35615480 -0.26780919 -0.33705457 -0.04392120 -0.2251312440  0.05211651  1.00000000 -0.38491375
+Temp      0.78679714 -0.0998567411  0.1724707512  0.78852921  0.70325502  0.77863893  0.40771029  0.6875575483  0.24338269 -0.38491375  1.00000000
+
+
+========================================================================================================================================================================
+
+Problem 2.2 - Understanding the Model
+
+(2/2 points)
+Compute the correlations between all the variables in the training set. Which of the following independent variables is N2O highly correlated with (absolute correlation greater than 0.7)? Select all that apply.
+
+ MEI  CO2  CH4  CFC.11  CFC.12  Aerosols  TSI
+Ans: CO2, CH4, CFC.12, - This answer is correct.
+
+
+Which of the following independent variables is CFC.11 highly correlated with? Select all that apply.
+
+ MEI  CO2  CH4  N2O  CFC.12  Aerosols  TSI
+Ans: CH4, CFC.12
+
+========================================================================================================================================================================
+
+Problem 3 - Simplifying the Model
+
+(2/2 points)
+Given that the correlations are so high, let us focus on the N2O variable and build a model with only MEI, TSI, Aerosols and N2O as independent variables. Remember to use the training set to build the model.
+
+Enter the coefficient of N2O in this reduced model:
+Ans: 2.532e-02
+
+Enter the model R2:
+Ans: 0.7261
+
+Use R code
+> TempReg2 = lm(Temp ~ MEI + TSI + Aerosols + N2O, data = climate_training)
+> summary(TempReg2)
+
+Call:
+lm(formula = Temp ~ MEI + TSI + Aerosols + N2O, data = climate_training)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.27916 -0.05975 -0.00595  0.05672  0.34195 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -1.162e+02  2.022e+01  -5.747 2.37e-08 ***
+MEI          6.419e-02  6.652e-03   9.649  < 2e-16 ***
+TSI          7.949e-02  1.487e-02   5.344 1.89e-07 ***
+Aerosols    -1.702e+00  2.180e-01  -7.806 1.19e-13 ***
+N2O          2.532e-02  1.311e-03  19.307  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.09547 on 279 degrees of freedom
+Multiple R-squared:  0.7261,    Adjusted R-squared:  0.7222 
+F-statistic: 184.9 on 4 and 279 DF,  p-value: < 2.2e-16
+
+
+
+========================================================================================================================================================================   
+
+Problem 4 - Automatically Building the Model
+
+(4/4 points)
+We have many variables in this problem, and as we have seen above, dropping some from the model does not decrease model quality. R provides a function, step, that will automate the procedure of trying different combinations of variables to find a good compromise of model simplicity and R2. This trade-off is formalized by the Akaike information criterion (AIC) - it can be informally thought of as the quality of the model with a penalty for the number of variables in the model.
+
+The step function has one argument - the name of the initial model. It returns a simplified model. Use the step function in R to derive a new model, with the full model as the initial model (HINT: If your initial full model was called "climateLM", you could create a new model with the step function by typing step(climateLM). Be sure to save your new model to a variable name so that you can look at the summary. For more information about the step function, type ?step in your R console.)
+
+Enter the R2 value of the model produced by the step function:
+Ans: 0.7508
+ 
+Which of the following variable(s) were eliminated from the full model by the step function? Select all that apply.
+
+ MEI  CO2  CH4  N2O  CFC.11  CFC.12  TSI  Aerosols
+Ans: CH4, - This answer is correct.
+It is interesting to note that the step function does not address the collinearity of the variables, except that adding highly correlated variables will not improve the R2 significantly. The consequence of this is that the step function will not necessarily produce a very interpretable model - just a model that has balanced quality and simplicity for a particular weighting of quality and simplicity (AIC).
+
+> TempRegStep = step(TempReg)
+Start:  AIC=-1348.16
+Temp ~ MEI + CO2 + CH4 + N2O + CFC.11 + CFC.12 + TSI + Aerosols
+
+           Df Sum of Sq    RSS     AIC
+- CH4       1   0.00049 2.3135 -1350.1
+<none>                  2.3130 -1348.2
+- N2O       1   0.03132 2.3443 -1346.3
+- CO2       1   0.06719 2.3802 -1342.0
+- CFC.12    1   0.11874 2.4318 -1335.9
+- CFC.11    1   0.13986 2.4529 -1333.5
+- TSI       1   0.33516 2.6482 -1311.7
+- Aerosols  1   0.43727 2.7503 -1301.0
+- MEI       1   0.82823 3.1412 -1263.2
+
+Step:  AIC=-1350.1
+Temp ~ MEI + CO2 + N2O + CFC.11 + CFC.12 + TSI + Aerosols
+
+           Df Sum of Sq    RSS     AIC
+<none>                  2.3135 -1350.1
+- N2O       1   0.03133 2.3448 -1348.3
+- CO2       1   0.06672 2.3802 -1344.0
+- CFC.12    1   0.13023 2.4437 -1336.5
+- CFC.11    1   0.13938 2.4529 -1335.5
+- TSI       1   0.33500 2.6485 -1313.7
+- Aerosols  1   0.43987 2.7534 -1302.7
+- MEI       1   0.83118 3.1447 -1264.9
+
+
+
+========================================================================================================================================================================
+
+Problem 5 - Testing on Unseen Data
+
+(2/2 points)
+We have developed an understanding of how well we can fit a linear regression to the training data, but does the model quality hold when applied to unseen data?
+
+Using the model produced from the step function, calculate temperature predictions for the testing data set, using the predict function.
+
+Enter the testing set R2:
+
+Ans: 0.6286051
+> TempPrediction = predict(TempRegStep, newdata = climate_test)
+> SSE = sum((TempPrediction - climate_test$Temp)^2)
+> SST = sum((mean(climate_training$Temp)-climate_test$Temp)^2)
+> R2=1-SSE/SST
+> SSE
+[1] 0.2176444
+> SST
+[1] 0.5860189
+> R2
+[1] 0.6286051
+
+
+
+ 
+READING TEST SCORES
+
+The Programme for International Student Assessment (PISA) is a test given every three years to 15-year-old students from around the world to evaluate their performance in mathematics, reading, and science. This test provides a quantitative way to compare the performance of students from different parts of the world. In this homework assignment, we will predict the reading scores of students from the United States of America on the 2009 PISA exam.
+
+The datasets pisa2009train.csv and pisa2009test.csv contain information about the demographics and schools for American students taking the exam, derived from 2009 PISA Public-Use Data Files distributed by the United States National Center for Education Statistics (NCES). While the datasets are not supposed to contain identifying information about students taking the test, by using the data you are bound by the NCES data use agreement, which prohibits any attempt to determine the identity of any student in the datasets.
+
+Each row in the datasets pisa2009train.csv and pisa2009test.csv represents one student taking the exam. The datasets have the following variables:
+
+grade: The grade in school of the student (most 15-year-olds in America are in 10th grade)
+
+male: Whether the student is male (1/0)
+
+raceeth: The race/ethnicity composite of the student
+
+preschool: Whether the student attended preschool (1/0)
+
+expectBachelors: Whether the student expects to obtain a bachelor's degree (1/0)
+
+motherHS: Whether the student's mother completed high school (1/0)
+
+motherBachelors: Whether the student's mother obtained a bachelor's degree (1/0)
+
+motherWork: Whether the student's mother has part-time or full-time work (1/0)
+
+fatherHS: Whether the student's father completed high school (1/0)
+
+fatherBachelors: Whether the student's father obtained a bachelor's degree (1/0)
+
+fatherWork: Whether the student's father has part-time or full-time work (1/0)
+
+selfBornUS: Whether the student was born in the United States of America (1/0)
+
+motherBornUS: Whether the student's mother was born in the United States of America (1/0)
+
+fatherBornUS: Whether the student's father was born in the United States of America (1/0)
+
+englishAtHome: Whether the student speaks English at home (1/0)
+
+computerForSchoolwork: Whether the student has access to a computer for schoolwork (1/0)
+
+read30MinsADay: Whether the student reads for pleasure for 30 minutes/day (1/0)
+
+minutesPerWeekEnglish: The number of minutes per week the student spend in English class
+
+studentsInEnglish: The number of students in this student's English class at school
+
+schoolHasLibrary: Whether this student's school has a library (1/0)
+
+publicSchool: Whether this student attends a public school (1/0)
+
+urban: Whether this student's school is in an urban area (1/0)
+
+schoolSize: The number of students in this student's school
+
+readingScore: The student's reading score, on a 1000-point scale
+
+========================================================================================================================================================================
+Problem 1.1 - Dataset size
+
+(1/1 point)
+Load the training and testing sets using the read.csv() function, and save them as variables with the names pisaTrain and pisaTest.
+
+How many students are there in the training set?
+
+Ans: 3663 - correct 
+> pisaTrain = read.csv("pisa2009train.csv")
+> pisaTest = read.csv("pisa2009test.csv")
+> str(pisaTrain)
+'data.frame':   3663 obs. of  24 variables:
+ $ grade                : int  11 11 9 10 10 10 10 10 9 10 ...
+ $ male                 : int  1 1 1 0 1 1 0 0 0 1 ...
+ $ raceeth              : Factor w/ 7 levels "American Indian/Alaska Native",..: NA 7 7 3 4 3 2 7 7 5 ...
+ $ preschool            : int  NA 0 1 1 1 1 0 1 1 1 ...
+ $ expectBachelors      : int  0 0 1 1 0 1 1 1 0 1 ...
+ $ motherHS             : int  NA 1 1 0 1 NA 1 1 1 1 ...
+ $ motherBachelors      : int  NA 1 1 0 0 NA 0 0 NA 1 ...
+ $ motherWork           : int  1 1 1 1 1 1 1 0 1 1 ...
+ $ fatherHS             : int  NA 1 1 1 1 1 NA 1 0 0 ...
+ $ fatherBachelors      : int  NA 0 NA 0 0 0 NA 0 NA 0 ...
+ $ fatherWork           : int  1 1 1 1 0 1 NA 1 1 1 ...
+ $ selfBornUS           : int  1 1 1 1 1 1 0 1 1 1 ...
+ $ motherBornUS         : int  0 1 1 1 1 1 1 1 1 1 ...
+ $ fatherBornUS         : int  0 1 1 1 0 1 NA 1 1 1 ...
+ $ englishAtHome        : int  0 1 1 1 1 1 1 1 1 1 ...
+ $ computerForSchoolwork: int  1 1 1 1 1 1 1 1 1 1 ...
+ $ read30MinsADay       : int  0 1 0 1 1 0 0 1 0 0 ...
+ $ minutesPerWeekEnglish: int  225 450 250 200 250 300 250 300 378 294 ...
+ $ studentsInEnglish    : int  NA 25 28 23 35 20 28 30 20 24 ...
+ $ schoolHasLibrary     : int  1 1 1 1 1 1 1 1 0 1 ...
+ $ publicSchool         : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ urban                : int  1 0 0 1 1 0 1 0 1 0 ...
+ $ schoolSize           : int  673 1173 1233 2640 1095 227 2080 1913 502 899 ...
+ $ readingScore         : num  476 575 555 458 614 ...
+
+ 
+========================================================================================================================================================================
+ 
+Problem 1.2 - Summarizing the dataset
+
+(2/2 points)
+Using tapply() on pisaTrain, what is the average reading test score of males?
+Ans:  483.5325 - correct
+
+
+Of females?
+Ans:  512.9406 - correct 
+
+> tapply(pisaTrain$readingScore, pisaTrain$male, mean)
+       0        1 
+512.9406 483.5325
+ 
+========================================================================================================================================================================
+
+Problem 1.3 - Locating missing values
+
+(1/1 point)
+Which variables are missing data in at least one observation in the training set? Select all that apply.
+
+grade  male  raceeth  preschool  expectBachelors  motherHS  motherBachelors  motherWork  fatherHS  fatherBachelors  fatherWork  selfBornUS  motherBornUS  fatherBornUS  englishAtHome  computerForSchoolwork  read30MinsADay  minutesPerWeekEnglish  studentsInEnglish  schoolHasLibrary  publicSchool  urban  schoolSize  readingScore
+
+Ans: raceeth, preschool, expectBachelors, motherHS, motherBachelors, motherWork, fatherHS, fatherBachelors, fatherWork, selfBornUS, motherBornUS, fatherBornUS, englishAtHome, computerForSchoolwork, read30MinsADay, minutesPerWeekEnglish, studentsInEnglish, schoolHasLibrary, schoolSize, - This answer is correct.
+ 
+> summary(pisaTrain)
+     grade            male                      raceeth       preschool      expectBachelors     motherHS    motherBachelors    motherWork        fatherHS      fatherBachelors    fatherWork    
+ Min.   : 8.00   Min.   :0.0000   White             :2015   Min.   :0.0000   Min.   :0.0000   Min.   :0.00   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:10.00   1st Qu.:0.0000   Hispanic          : 834   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:1.00   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:0.0000   1st Qu.:1.0000  
+ Median :10.00   Median :1.0000   Black             : 444   Median :1.0000   Median :1.0000   Median :1.00   Median :0.0000   Median :1.0000   Median :1.0000   Median :0.0000   Median :1.0000  
+ Mean   :10.09   Mean   :0.5111   Asian             : 143   Mean   :0.7228   Mean   :0.7859   Mean   :0.88   Mean   :0.3481   Mean   :0.7345   Mean   :0.8593   Mean   :0.3319   Mean   :0.8531  
+ 3rd Qu.:10.00   3rd Qu.:1.0000   More than one race: 124   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.00   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :12.00   Max.   :1.0000   (Other)           :  68   Max.   :1.0000   Max.   :1.0000   Max.   :1.00   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+                                  NA's              :  35   NA's   :56       NA's   :62       NA's   :97     NA's   :397      NA's   :93       NA's   :245      NA's   :569      NA's   :233     
+   selfBornUS      motherBornUS     fatherBornUS    englishAtHome    computerForSchoolwork read30MinsADay   minutesPerWeekEnglish studentsInEnglish schoolHasLibrary  publicSchool   
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000        Min.   :0.0000   Min.   :   0.0        Min.   : 1.0      Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:1.0000   1st Qu.:1.0000   1st Qu.:1.0000   1st Qu.:1.0000   1st Qu.:1.0000        1st Qu.:0.0000   1st Qu.: 225.0        1st Qu.:20.0      1st Qu.:1.0000   1st Qu.:1.0000  
+ Median :1.0000   Median :1.0000   Median :1.0000   Median :1.0000   Median :1.0000        Median :0.0000   Median : 250.0        Median :25.0      Median :1.0000   Median :1.0000  
+ Mean   :0.9313   Mean   :0.7725   Mean   :0.7668   Mean   :0.8717   Mean   :0.8994        Mean   :0.2899   Mean   : 266.2        Mean   :24.5      Mean   :0.9676   Mean   :0.9339  
+ 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000        3rd Qu.:1.0000   3rd Qu.: 300.0        3rd Qu.:30.0      3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000        Max.   :1.0000   Max.   :2400.0        Max.   :75.0      Max.   :1.0000   Max.   :1.0000  
+ NA's   :69       NA's   :71       NA's   :113      NA's   :71       NA's   :65            NA's   :34       NA's   :186           NA's   :249       NA's   :143                      
+     urban          schoolSize    readingScore  
+ Min.   :0.0000   Min.   : 100   Min.   :168.6  
+ 1st Qu.:0.0000   1st Qu.: 712   1st Qu.:431.7  
+ Median :0.0000   Median :1212   Median :499.7  
+ Mean   :0.3849   Mean   :1369   Mean   :497.9  
+ 3rd Qu.:1.0000   3rd Qu.:1900   3rd Qu.:566.2  
+ Max.   :1.0000   Max.   :6694   Max.   :746.0  
+                  NA's   :162    
+ 
+ 
+ 
+========================================================================================================================================================================
+ 
+Problem 1.4 - Removing missing values
+
+(2/2 points)
+Linear regression discards observations with missing data, so we will remove all such observations from the training and testing sets. Later in the course, we will learn about imputation, which deals with missing data by filling in missing values with plausible information.
+
+Type the following commands into your R console to remove observations with any missing value from pisaTrain and pisaTest:
+
+pisaTrain = na.omit(pisaTrain)
+
+pisaTest = na.omit(pisaTest)
+
+How many observations are now in the training set?
+Ans:  2414 - correct
+
+How many observations are now in the testing set?
+Ans: 990 - correct 
+ 
+> pisaTrain = na.omit(pisaTrain)
+> pisaTest = na.omit(pisaTest)
+> nrow(pisaTrain)
+[1] 2414
+> nrow(pisaTest)
+[1] 990
+ 
+ 
+========================================================================================================================================================================
+ 
+Problem 2.1 - Factor variables
+
+(2/2 points)
+Factor variables are variables that take on a discrete set of values, like the "Region" variable in the WHO dataset from the second lecture of Unit 1. This is an unordered factor because there isn't any natural ordering between the levels. An ordered factor has a natural ordering between the levels (an example would be the classifications "large," "medium," and "small").
+
+Which of the following variables is an unordered factor with at least 3 levels? (Select all that apply.)
+grade  male  raceeth
+
+Ans: raceeth, - This answer is correct.
+
+Which of the following variables is an ordered factor with at least 3 levels? (Select all that apply.)
+grade  male  raceeth
+Ans: grade, - This answer is correct.
+ 
+ 
+========================================================================================================================================================================
+ 
+Problem 2.2 - Unordered factors in regression models
+
+(1/1 point)
+To include unordered factors in a linear regression model, we define one level as the "reference level" and add a binary variable for each of the remaining levels. In this way, a factor with n levels is replaced by n-1 binary variables. The reference level is typically selected to be the most frequently occurring level in the dataset.
+
+As an example, consider the unordered factor variable "color", with levels "red", "green", and "blue". If "green" were the reference level, then we would add binary variables "colorred" and "colorblue" to a linear regression problem. All red examples would have colorred=1 and colorblue=0. All blue examples would have colorred=0 and colorblue=1. All green examples would have colorred=0 and colorblue=0.
+
+Now, consider the variable "raceeth" in our problem, which has levels "American Indian/Alaska Native", "Asian", "Black", "Hispanic", "More than one race", "Native Hawaiian/Other Pacific Islander", and "White". Because it is the most common in our population, we will select White as the reference level.
+
+Which binary variables will be included in the regression model? (Select all that apply.)
+raceethAmerican Indian/Alaska Native  raceethAsian  raceethBlack  raceethHispanic  raceethMore than one race  raceethNative Hawaiian/Other Pacific Islander  raceethWhite
+
+Ans: raceethAmerican Indian/Alaska Native, raceethAsian, raceethBlack, raceethHispanic, raceethMore than one race, raceethNative Hawaiian/Other Pacific Islander, - This answer is correct.
+ 
+ 
+========================================================================================================================================================================
+ 
+Problem 2.3 - Example unordered factors
+
+(2/2 points)
+Consider again adding our unordered factor race to the regression model with reference level "White".
+
+For a student who is Asian, which binary variables would be set to 0? All remaining variables will be set to 1. (Select all that apply.)
+raceethAmerican Indian/Alaska Native  raceethAsian  raceethBlack  raceethHispanic  raceethMore than one race  raceethNative Hawaiian/Other Pacific Islander	
+
+Ans: raceethAmerican Indian/Alaska Native, raceethBlack, raceethHispanic, raceethMore than one race, raceethNative Hawaiian/Other Pacific Islander, - This answer is correct.
+This is because raceethAsian's value =1 mean that the boy's race is Asian
+
+For a student who is white, which binary variables would be set to 0? All remaining variables will be set to 1. (Select all that apply.)
+raceethAmerican Indian/Alaska Native  raceethAsian  raceethBlack  raceethHispanic  raceethMore than one race  raceethNative Hawaiian/Other Pacific Islander
+
+Ans: raceethAmerican Indian/Alaska Native, raceethAsian, raceethBlack, raceethHispanic, raceethMore than one race, raceethNative Hawaiian/Other Pacific Islander, - This answer is correct.
+Refer problem 2.2 for detailed understanding of this.
+ 
+========================================================================================================================================================================
+
+Problem 3.1 - Building a model
+
+(2/2 points)
+Because the race variable takes on text values, it was loaded as a factor variable when we read in the dataset with read.csv() -- you can see this when you run str(pisaTrain) or str(pisaTest). However, by default R selects the first level alphabetically ("American Indian/Alaska Native") as the reference level of our factor instead of the most common level ("White"). Set the reference level of the factor by typing the following two lines in your R console:
+
+pisaTrain$raceeth = relevel(pisaTrain$raceeth, "White")
+
+pisaTest$raceeth = relevel(pisaTest$raceeth, "White")
+
+Now, build a linear regression model (call it lmScore) using the training set to predict readingScore using all the remaining variables.
+
+It would be time-consuming to type all the variables, but R provides the shorthand notation "readingScore ~ ." to mean "predict readingScore using all the other variables in the data frame." The period is used to replace listing out all of the independent variables. As an example, if your dependent variable is called "Y", your independent variables are called "X1", "X2", and "X3", and your training data set is called "Train", instead of the regular notation:
+
+LinReg = lm(Y ~ X1 + X2 + X3, data = Train)
+
+You would use the following command to build your model:
+
+LinReg = lm(Y ~ ., data = Train)
+
+What is the Multiple R-squared value of lmScore on the training set?
+Ans:  0.3251 - correct
+> lmScore = lm(readingScore ~ ., data=pisaTrain)
+> summary(lmScore)
+
+Call:
+lm(formula = readingScore ~ ., data = pisaTrain)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-247.44  -48.86    1.86   49.77  217.18 
+
+Coefficients:
+                                                Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                   143.766333  33.841226   4.248 2.24e-05 ***
+grade                                          29.542707   2.937399  10.057  < 2e-16 ***
+male                                          -14.521653   3.155926  -4.601 4.42e-06 ***
+raceethAmerican Indian/Alaska Native          -67.277327  16.786935  -4.008 6.32e-05 ***
+raceethAsian                                   -4.110325   9.220071  -0.446  0.65578    
+raceethBlack                                  -67.012347   5.460883 -12.271  < 2e-16 ***
+raceethHispanic                               -38.975486   5.177743  -7.528 7.29e-14 ***
+raceethMore than one race                     -16.922522   8.496268  -1.992  0.04651 *  
+raceethNative Hawaiian/Other Pacific Islander  -5.101601  17.005696  -0.300  0.76421    
+preschool                                      -4.463670   3.486055  -1.280  0.20052    
+expectBachelors                                55.267080   4.293893  12.871  < 2e-16 ***
+motherHS                                        6.058774   6.091423   0.995  0.32001    
+motherBachelors                                12.638068   3.861457   3.273  0.00108 ** 
+motherWork                                     -2.809101   3.521827  -0.798  0.42517    
+fatherHS                                        4.018214   5.579269   0.720  0.47147    
+fatherBachelors                                16.929755   3.995253   4.237 2.35e-05 ***
+fatherWork                                      5.842798   4.395978   1.329  0.18393    
+selfBornUS                                     -3.806278   7.323718  -0.520  0.60331    
+motherBornUS                                   -8.798153   6.587621  -1.336  0.18182    
+fatherBornUS                                    4.306994   6.263875   0.688  0.49178    
+englishAtHome                                   8.035685   6.859492   1.171  0.24153    
+computerForSchoolwork                          22.500232   5.702562   3.946 8.19e-05 ***
+read30MinsADay                                 34.871924   3.408447  10.231  < 2e-16 ***
+minutesPerWeekEnglish                           0.012788   0.010712   1.194  0.23264    
+studentsInEnglish                              -0.286631   0.227819  -1.258  0.20846    
+schoolHasLibrary                               12.215085   9.264884   1.318  0.18749    
+publicSchool                                  -16.857475   6.725614  -2.506  0.01226 *  
+urban                                          -0.110132   3.962724  -0.028  0.97783    
+schoolSize                                      0.006540   0.002197   2.977  0.00294 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 73.81 on 2385 degrees of freedom
+Multiple R-squared:  0.3251,    Adjusted R-squared:  0.3172 
+F-statistic: 41.04 on 28 and 2385 DF,  p-value: < 2.2e-16
+
+Note that this R-squared is lower than the ones for the models we saw in the lectures and recitation. This does not necessarily imply that the model is of poor quality. More often than not, it simply means that the prediction problem at hand (predicting a student's test score based on demographic and school-related variables) is more difficult than other prediction problems (like predicting a team's number of wins from their runs scored and allowed, or predicting the quality of wine from weather conditions). 
+ 
+ 
+ 
+ 
+========================================================================================================================================================================
+ 
+ Problem 3.2 - Computing the root-mean squared error of the model
+ 
+ (1/1 point)
+ What is the training-set root-mean squared error (RMSE) of lmScore?
+ Ans: 73.36555 - correct
+ 
+sum of squared errors which is the sum of the squares of our prediction minus the actual value on the new dataset for all the predictions. This can be computed on either the training model (built on the training sample) or on the predictions for the test dataset
+SSE = sum(lmScore$residuals^2) --> SSE for the training model itself
+SSE = sum((TempPrediction - climate_test$Temp)^2) --> SSE for the the predictions
+
+> SSE = sum(lmScore$residuals^2) 
+> SSE
+[1] 12993365
+> RMSE = sqrt(SSE/nrow(pisaTrain))
+> RMSE
+[1] 73.36555
+
+ 
+========================================================================================================================================================================
+
+Problem 3.3 - Comparing predictions for similar students
+
+(1/1 point)
+Consider two students A and B. They have all variable values the same, except that student A is in grade 11 and student B is in grade 9. What is the predicted reading score of student A minus the predicted reading score of student B?
+
+ -59.09  -29.54  0  29.54  59.09 59.09  The difference cannot be determined without more information about the two students
+
+Ans:  59.09 - correct
+Using Linear regression equation from Andrew Ng
+h(theta) = theta0 + theta1 * x1
+
+> grade9 = 143.766333 + 9*29.542707
+> grade11 = 143.766333 + 11*29.542707
+> diff = grade11-grade9
+> diff
+[1] 59.08541
+
+ 
+========================================================================================================================================================================
+
+
+Problem 3.4 - Interpreting model coefficients
+
+(1/1 point)
+What is the meaning of the coefficient associated with variable raceethAsian?
+1) Predicted average reading score of an Asian student  
+2) Difference between the average reading score of an Asian student and the average reading score of a white student  
+3) Difference between the average reading score of an Asian student and the average reading score of all the students in the dataset  
+4) Predicted difference in the reading score between an Asian student and a white student who is otherwise identical 
+
+Ans: Predicted difference in the reading score between an Asian student and a white student who is otherwise identical - correct
+Again use the linear regression equation:
+> asian_student = 143.766333 + 1*(-4.110325)
+> white_student = 143.766333 + 0*(-4.110325)
+> student_diff = asian_student - white_student
+> student_diff
+[1] -4.110325
+> summary(lmScore)$coefficients["raceethAsian","Estimate"]
+[1] -4.110325
+
+This means that if the value of Asian student is 1 and for a white student it is 0 and if both are identical then both's reading score (as computed by lmScore regression model) would differ by the  raceethAsian coefficient's value.
+ 
+ 
+========================================================================================================================================================================
+
+Problem 3.5 - Identifying variables lacking statistical significance
+
+(1/1 point)
+Based on the significance codes, which variables are candidates for removal from the model? Select all that apply. (We'll assume that the factor variable raceeth should only be removed if none of its levels are significant.)
+grade  male  raceeth  preschool  expectBachelors  motherHS  motherBachelors  motherWork  fatherHS  fatherBachelors  fatherWork  selfBornUS  motherBornUS  fatherBornUS  englishAtHome  computerForSchoolwork  read30MinsADay  minutesPerWeekEnglish  studentsInEnglish  schoolHasLibrary  publicSchool  urban  schoolSize
+
+Ans: preschool, motherHS, motherWork, fatherHS, fatherWork, selfBornUS, motherBornUS, fatherBornUS, englishAtHome, minutesPerWeekEnglish, studentsInEnglish, schoolHasLibrary, urban
+From summary(lmScore), we can see which variables were significant at the 0.05 level
+
+
+========================================================================================================================================================================
+
+Problem 4.1 - Predicting on unseen data
+
+(2/2 points)
+Using the "predict" function and supplying the "newdata" argument, use the lmScore model to predict the reading scores of students in pisaTest. Call this vector of predictions "predTest". Do not change the variables in the model (for example, do not remove variables that we found were not significant in the previous part of this problem). Use the summary function to describe the test set predictions.
+
+What is the range between the maximum and minimum predicted reading score on the test set?
+
+Ans: 284.5
+> predTest = predict(lmScore, newdata = pisaTest)
+> summary(predTest)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  353.2   482.0   524.0   516.7   555.7   637.7 
+> 637.7 - 353.2
+[1] 284.5
+
+
+========================================================================================================================================================================
+Problem 4.2 - Test set SSE and RMSE
+
+(2/2 points)
+What is the sum of squared errors (SSE) of lmScore on the testing set?
+Ans:  5762082 - correct
+
+What is the root-mean squared error (RMSE) of lmScore on the testing set?
+Ans:  76.29079 - correct
+
+> lmScorePredictions = predict(lmScore, newdata = pisaTest)
+> SSE = sum((lmScorePredictions - pisaTest$readingScore)^2)
+> RMSE = sqrt(SSE/nrow(pisaTest))
+> RMSE
+[1] 76.29079
+> SSE
+[1] 5762082
+
+
+========================================================================================================================================================================
+
+
+Problem 4.3 - Baseline prediction and test-set SSE
+
+(2/2 points)
+What is the predicted test score used in the baseline model? Remember to compute this value using the training set and not the test set.
+Ans: 517.9629 - correct
+
+What is the sum of squared errors of the baseline model on the testing set? HINT: We call the sum of squared errors for the baseline model the total sum of squares (SST).
+Ans: 7802354 - correct
+
+
+> mean(pisaTrain$readingScore)
+[1] 517.9629
+> meanRS = mean(pisaTrain$readingScore)
+> SST = sum((meanRS - pisaTest$readingScore)^2)
+> SST
+[1] 7802354
+
+
+
+========================================================================================================================================================================
+Problem 4.4 - Test-set R-squared
+
+(1/1 point)
+What is the test-set R-squared value of lmScore?
+Ans:  0.2614944 - correct
+
+> meanRS = mean(pisaTrain$readingScore)
+> lmScorePredictions = predict(lmScore, newdata = pisaTest)
+> SSE = sum((lmScorePredictions - pisaTest$readingScore)^2)
+> SST = sum((meanRS-pisaTest$readingScore)^2)
+> R2 = 1 - SSE/SST
+> R2
+[1] 0.2614944
+
+
+========================================================================================================================================================================
+
+
+DETECTING FLU EPIDEMICS VIA SEARCH ENGINE QUERY DATA 
+
+Flu epidemics constitute a major public health concern causing respiratory illnesses, hospitalizations, and deaths. According to the National Vital Statistics Reports published in October 2012, influenza ranked as the eighth leading cause of death in 2011 in the United States. Each year, 250,000 to 500,000 deaths are attributed to influenza related diseases throughout the world.
+
+The U.S. Centers for Disease Control and Prevention (CDC) and the European Influenza Surveillance Scheme (EISS) detect influenza activity through virologic and clinical data, including Influenza-like Illness (ILI) physician visits. Reporting national and regional data, however, are published with a 1-2 week lag.
+
+The Google Flu Trends project was initiated to see if faster reporting can be made possible by considering flu-related online search queries -- data that is available almost immediately.
+
+Problem 1.1 - Understanding the Data
+
+(6/6 points)
+We would like to estimate influenza-like illness (ILI) activity using Google web search logs. Fortunately, one can easily access this data online:
+
+ILI Data - The CDC publishes on its website the official regional and state-level percentage of patient visits to healthcare providers for ILI purposes on a weekly basis.
+
+Google Search Queries - Google Trends allows public retrieval of weekly counts for every query searched by users around the world. For each location, the counts are normalized by dividing the count for each query in a particular week by the total number of online search queries submitted in that location during the week. Then, the values are adjusted to be between 0 and 1.
+
+The csv file FluTrain.csv aggregates this data from January 1, 2004 until December 31, 2011 as follows:
+
+"Week" - The range of dates represented by this observation, in year/month/day format.
+
+"ILI" - This column lists the percentage of ILI-related physician visits for the corresponding week.
+
+"Queries" - This column lists the fraction of queries that are ILI-related for the corresponding week, adjusted to be between 0 and 1 (higher values correspond to more ILI-related search queries).
+
+Before applying analytics tools on the training set, we first need to understand the data at hand. Load "FluTrain.csv" into a data frame called FluTrain. Looking at the time period 2004-2011, which week corresponds to the highest percentage of ILI-related physician visits? Select the day of the month corresponding to the start of this week.
+
+Ans: October, 18 - 2009 - This answer is correct. 
+
+
+Which week corresponds to the highest percentage of ILI-related query fraction?
+Ans: October, 18 - 2009 - This answer is correct. 
+
+> FluTrain = read.csv("FluTrain.csv")
+> which.max(FluTrain$ILI)
+[1] 303
+> which.max(FluTrain$Queries)
+[1] 303
+> FluTrain[303,]
+                       Week      ILI Queries
+303 2009-10-18 - 2009-10-24 7.618892       1
+
+
+========================================================================================================================================================================
+
+Problem 1.2 - Understanding the Data
+
+(1/1 point)
+Let us now understand the data at an aggregate level. Plot the histogram of the dependent variable, ILI. What best describes the distribution of values of ILI?
+
+1) Most of the ILI values are small, with a relatively small number of much larger values (in statistics, this sort of data is called "skew right"). - correct  
+2) The ILI values are balanced, with equal numbers of unusually large and unusually small values.  
+3) Most of the ILI values are large, with a relatively small number of much smaller values (in statistics, this sort of data is called "skew left").
+
+
+
+========================================================================================================================================================================
+
+Problem 1.3 - Understanding the Data
+
+(1/1 point)
+When handling a skewed dependent variable, it is often useful to predict the logarithm of the dependent variable instead of the dependent variable itself -- this prevents the small number of unusually large or small observations from having an undue influence on the sum of squared errors of predictive models. In this problem, we will predict the natural log of the ILI variable, which can be computed in R using the log() function.
+
+Plot the natural logarithm of ILI versus Queries. What does the plot suggest?.
+
+1) There is a negative, linear relationship between log(ILI) and Queries.  
+2) There is no apparent linear relationship between log(ILI) and Queries.  
+3) There is a positive, linear relationship between log(ILI) and Queries. - correct
+
+Any of these would plot a straight line for a steady (Run/Rise) value on the graph:
+> plot(log(FluTrain$ILI),FluTrain$Queries)
+> plot(FluTrain$Queries,log(FluTrain$ILI))
+
+========================================================================================================================================================================
+
+Problem 2.1 - Linear Regression Model
+
+(1/1 point)
+Based on the plot we just made, it seems that a linear regression model could be a good modeling choice. Based on our understanding of the data from the previous subproblem, which model best describes our estimation problem?
+
+ 1) ILI = intercept + coefficient x Queries, where the coefficient is negative  
+ 2) Queries = intercept + coefficient x ILI, where the coefficient is negative  
+ 3) ILI = intercept + coefficient x Queries, where the coefficient is positive  
+ 4) Queries = intercept + coefficient x ILI, where the coefficient is positive  
+ 5) log(ILI) = intercept + coefficient x Queries, where the coefficient is negative  
+ 6) Queries = intercept + coefficient x log(ILI), where the coefficient is negative  
+ 7) log(ILI) = intercept + coefficient x Queries, where the coefficient is positive - correct  
+ 8) Queries = intercept + coefficient x log(ILI), where the coeffcient is positive
+
+> FluReg = lm(log(FluTrain$ILI) ~ FluTrain$Queries, data=FluTrain)
+> summary(FluReg)
+
+Call:
+lm(formula = log(FluTrain$ILI) ~ FluTrain$Queries, data = FluTrain)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.76003 -0.19696 -0.01657  0.18685  1.06450 
+
+Coefficients:
+                 Estimate Std. Error t value Pr(>|t|)    
+(Intercept)      -0.49934    0.03041  -16.42   <2e-16 ***
+FluTrain$Queries  2.96129    0.09312   31.80   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.2995 on 415 degrees of freedom
+Multiple R-squared:  0.709,     Adjusted R-squared:  0.7083 
+F-statistic:  1011 on 1 and 415 DF,  p-value: < 2.2e-16
+
+
+We chose the formula 
+FluReg = lm(log(FluTrain$ILI) ~ FluTrain$Queries, data=FluTrain) and not 
+FluReg = lm(FluTrain$Queries ~ log(FluTrain$ILI), data=FluTrain)
+because as per previous problem: In this problem, we will <predict> the natural log of the ILI variable, which can be computed in R using the log() function.
+
+========================================================================================================================================================================
+Problem 2.2 - Linear Regression Model
+
+(2/2 points)
+Let's call the regression model from the previous problem (Problem 2.1) FluTrend1 and run it in R. Hint: to take the logarithm of a variable Var in a regression equation, you simply use log(Var) when specifying the formula to the lm() function.
+
+What is the training set R-squared value for FluTrend1 model (the "Multiple R-squared")?
+Ans: 0.709 - correct
+> FluTrend1 = lm(log(FluTrain$ILI) ~ FluTrain$Queries, data=FluTrain)
+> summary(FluTrend1)
+
+Call:
+lm(formula = log(FluTrain$ILI) ~ FluTrain$Queries, data = FluTrain)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.76003 -0.19696 -0.01657  0.18685  1.06450 
+
+Coefficients:
+                 Estimate Std. Error t value Pr(>|t|)    
+(Intercept)      -0.49934    0.03041  -16.42   <2e-16 ***
+FluTrain$Queries  2.96129    0.09312   31.80   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.2995 on 415 degrees of freedom
+Multiple R-squared:  0.709,     Adjusted R-squared:  0.7083 
+F-statistic:  1011 on 1 and 415 DF,  p-value: < 2.2e-16
+
+
+========================================================================================================================================================================
+Problem 2.3 - Linear Regression Model
+
+(1 point possible)
+For a single variable linear regression model, there is a direct relationship between the R-squared and the correlation between the independent and the dependent variables. What is the relationship we infer from our problem? (Don't forget that you can use the cor function to compute the correlation between two variables.)
+
+1) R-squared = Correlation^2   --Correct
+2) R-squared = log(1/Correlation)  
+3) R-squared = exp(-0.5*Correlation)
+Note that the "exp" function stands for the exponential function. The exponential can be computed in R using the function exp().
+
+> FluTrend1 = lm(log(FluTrain$ILI) ~ FluTrain$Queries, data=FluTrain)
+> summary(FluTrend1)
+
+Call:
+lm(formula = log(FluTrain$ILI) ~ FluTrain$Queries, data = FluTrain)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.76003 -0.19696 -0.01657  0.18685  1.06450 
+
+Coefficients:
+                 Estimate Std. Error t value Pr(>|t|)    
+(Intercept)      -0.49934    0.03041  -16.42   <2e-16 ***
+FluTrain$Queries  2.96129    0.09312   31.80   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.2995 on 415 degrees of freedom
+Multiple R-squared:  0.709,     Adjusted R-squared:  0.7083 
+F-statistic:  1011 on 1 and 415 DF,  p-value: < 2.2e-16
+
+> correlation = cor(log(FluTrain$ILI), FluTrain$Queries)
+> correlation
+[1] 0.8420333
+> correlation ^ 2
+[1] 0.7090201
+> log(1/correlation)
+[1] 0.1719357
+> exp(-0.5 * correlation)
+[1] 0.6563792
+
+========================================================================================================================================================================
+
+Problem 3.1 - Performance on the Test Set
+
+(1/1 point)
+The csv file FluTest.csv provides the 2012 weekly data of the ILI-related search queries and the observed weekly percentage of ILI-related physician visits. Load this data into a data frame called FluTest.
+
+Normally, we would obtain test-set predictions from the model FluTrend1 using the code
+
+PredTest1 = predict(FluTrend1, newdata=FluTest)
+
+However, the dependent variable in our model is log(ILI), so PredTest1 would contain predictions of the log(ILI) value. We are instead interested in obtaining predictions of the ILI value. We can convert from predictions of log(ILI) to predictions of ILI via exponentiation, or the exp() function. The new code, which predicts the ILI value, is
+
+PredTest1 = exp(predict(FluTrend1, newdata=FluTest))
+
+What is our estimate for the percentage of ILI-related physician visits for the week of March 11, 2012? (HINT: You can either just output FluTest$Week to find which element corresponds to March 11, 2012, or you can use the "which" function in R. To learn more about the which function, type ?which in your R console.)
+Ans:  2.187378 - correct
+> FluTrend1<-lm(log(ILI)~Queries,data=FluTrain)
+> PredTest1 = exp(predict(FluTrend1, newdata=FluTest))
+> PredTest1[which(FluTest$Week=="2012-03-11 - 2012-03-17")]
+      11 
+2.187378 
+
+Finding for this query: Don't use qualified names (FluTrain$ILI) while defining a regression model (instead use ILI) as it would error out during prediction as:
+> FluTrend1 = lm(log(FluTrain$ILI) ~ FluTrain$Queries, data=FluTrain)
+> PredTest1 = exp(predict(FluTrend1, newdata=FluTest))
+Warning message:
+'newdata' had 52 rows but variables found have 417 rows 
+> PredTest1[which(FluTest$Week=="2012-03-11 - 2012-03-17")]
+       11 
+0.9028987 
+> 
+
+========================================================================================================================================================================
+
+Problem 3.2 - Performance on the Test Set
+
+(1/1 point)
+What is the relative error betweeen the estimate (our prediction) and the observed value for the week of March 11, 2012? Note that the relative error is calculated as
+
+(Observed ILI - Estimated ILI)/Observed ILI
+Ans: 0.04623827 - correct
+
+> (FluTest$ILI[which(FluTest$Week=="2012-03-11 - 2012-03-17")]-PredTest1[which(FluTest$Week=="2012-03-11 - 2012-03-17")])/FluTest$ILI[which(FluTest$Week=="2012-03-11 - 2012-03-17")]
+        11 
+0.04623827 
+
+
+========================================================================================================================================================================
+
+Problem 3.3 - Performance on the Test Set
+
+(1/1 point)
+What is the Root Mean Square Error (RMSE) between our estimates and the actual observations for the percentage of ILI-related physician visits, on the test set?
+Ans: 0.7490645 - correct
+
+> FluTrend1<-lm(log(ILI)~Queries,data=FluTrain)
+> PredTest1 = exp(predict(FluTrend1, newdata=FluTest))
+> SSE = sum((PredTest1 - FluTest$ILI)^2)
+> SSE
+[1] 29.17708
+> RMSE = sqrt(SSE/nrow(FluTest))
+> RMSE
+[1] 0.7490645
+
+
+
+========================================================================================================================================================================
+Problem 4.1 - Training a Time Series Model
+
+(1/1 point)
+The observations in this dataset are consecutive weekly measurements of the dependent and independent variables. This sort of dataset is called a "time series." Often, statistical models can be improved by predicting the current value of the dependent variable using the value of the dependent variable from earlier weeks. In our models, this means we will predict the ILI variable in the current week using values of the ILI variable from previous weeks.
+
+First, we need to decide the amount of time to lag the observations. Because the ILI variable is reported with a 1- or 2-week lag, a decision maker cannot rely on the previous week's ILI value to predict the current week's value. Instead, the decision maker will only have data available from 2 or more weeks ago. We will build a variable called ILILag2 that contains the ILI value from 2 weeks before the current observation.
+
+To do so, we will use the "zoo" package, which provides a number of helpful methods for time series models. While many functions are built into R, you need to add new packages to use some functions. New packages can be installed and loaded easily in R, and we will do this many times in this class. Run the following two commands to install and load the zoo package. In the first command, you will be prompted to select a CRAN mirror to use for your download. Select a mirror near you geographically.
+
+install.packages("zoo")
+
+library(zoo)
+
+After installing and loading the zoo package, run the following commands to create the ILILag2 variable in the training set:
+
+ILILag2 = lag(zoo(FluTrain$ILI), -2, na.pad=TRUE)
+
+FluTrain$ILILag2 = coredata(ILILag2)
+
+In these commands, the value of -2 passed to lag means to return 2 observations before the current one; a positive value would have returned future observations. The parameter na.pad=TRUE means to add missing values for the first two weeks of our dataset, where we can't compute the data from 2 weeks earlier.
+
+How many values are missing in the new ILILag2 variable?
+Ans: 2 - correct
+
+> FluTrain = read.csv("FluTrain.csv")
+> ILILag2 = lag(zoo(FluTrain$ILI), -2, na.pad=TRUE)
+> FluTrain$ILILag2 = coredata(ILILag2)
+> summary(ILILag2)
+     Index        ILILag2      
+ Min.   :  1   Min.   :0.5341  
+ 1st Qu.:105   1st Qu.:0.9010  
+ Median :209   Median :1.2519  
+ Mean   :209   Mean   :1.6754  
+ 3rd Qu.:313   3rd Qu.:2.0580  
+ Max.   :417   Max.   :7.6189  
+               NA's   :2       
+> summary(FluTrain$ILILag2)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+ 0.5341  0.9010  1.2520  1.6750  2.0580  7.6190       2
+> sum(is.na(FluTrain$ILILag2)) 
+[1] 2
+
+
+========================================================================================================================================================================
+
+Problem 4.2 - Training a Time Series Model
+
+(1/1 point)
+Use the plot() function to plot the log of ILILag2 against the log of ILI. Which best describes the relationship between these two variables?
+
+1) There is a strong negative relationship between log(ILILag2) and log(ILI).  
+2) This is a weak or no relationship between log(ILILag2) and log(ILI)  
+3) There is a strong positive relationship between log(ILILag2) and log(ILI). - correct
+
+> plot(log(FluTrain$ILILag2),log(FluTrain$ILI))
+
+
+========================================================================================================================================================================
+
+Problem 4.3 - Training a Time Series Model
+
+(2/2 points)
+Train a linear regression model on the FluTrain dataset to predict the log of the ILI variable using the Queries variable as well as the log of the ILILag2 variable. Call this model FluTrend2.
+
+Which coefficients are significant at the p=0.05 level in this regression model? (Select all that apply.)
+Intercept  Queries  log(ILILag2)
+Ans: Intercept, Queries, log(ILILag2), - This answer is correct.
+
+What is the R^2 value of the FluTrend2 model?
+Ans:  0.9063 - correct
+
+> FluTrend2 = lm(log(ILI) ~ Queries + log(ILILag2), data=FluTrain)
+> summary(FluTrend2)
+
+Call:
+lm(formula = log(ILI) ~ Queries + log(ILILag2), data = FluTrain)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.52209 -0.11082 -0.01819  0.08143  0.76785 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  -0.24064    0.01953  -12.32   <2e-16 ***
+Queries       1.25578    0.07910   15.88   <2e-16 ***
+log(ILILag2)  0.65569    0.02251   29.14   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1703 on 412 degrees of freedom
+  (2 observations deleted due to missingness)
+Multiple R-squared:  0.9063,    Adjusted R-squared:  0.9059 
+F-statistic:  1993 on 2 and 412 DF,  p-value: < 2.2e-16
+
+
+========================================================================================================================================================================
+
+
+Problem 4.4 - Training a Time Series Model
+
+(1/1 point)
+On the basis of R-squared value and significance of coefficients, which statement is the most accurate?
+
+1) Due to overfitting, FluTrend2 is a weaker model then FluTrend1 on the training set.  
+2) FluTrend2 is about the same quality as FluTrend1 on the training set.  
+3) FluTrend2 is a stronger model than FluTrend1 on the training set. - correct
+
+========================================================================================================================================================================
+Problem 5.1 - Evaluating the Time Series Model in the Test Set
+
+(1/1 point)
+So far, we have only added the ILILag2 variable to the FluTrain data frame. To make predictions with our FluTrend2 model, we will also need to add ILILag2 to the FluTest data frame (note that adding variables before splitting into a training and testing set can prevent this duplication of effort).
+
+Modify the code from the previous subproblem to add an ILILag2 variable to the FluTest data frame. How many missing values are there in this new variable?
+Ans: 2 - correct
+
+> FluTest = read.csv("FluTest.csv")
+> ILILag2 = lag(zoo(FluTest$ILI), -2, na.pad=TRUE)
+> FluTest$ILILag2 = coredata(ILILag2)
+> summary(FluTest)
+                      Week         ILI            Queries          ILILag2      
+ 2012-01-01 - 2012-01-07: 1   Min.   :0.9018   Min.   :0.2390   Min.   :0.9018  
+ 2012-01-08 - 2012-01-14: 1   1st Qu.:1.1535   1st Qu.:0.2772   1st Qu.:1.1359  
+ 2012-01-15 - 2012-01-21: 1   Median :1.3592   Median :0.3924   Median :1.3409  
+ 2012-01-22 - 2012-01-28: 1   Mean   :1.6638   Mean   :0.4094   Mean   :1.5188  
+ 2012-01-29 - 2012-02-04: 1   3rd Qu.:1.8637   3rd Qu.:0.4874   3rd Qu.:1.7606  
+ 2012-02-05 - 2012-02-11: 1   Max.   :6.0336   Max.   :0.8054   Max.   :3.6002  
+ (Other)                :46                                     NA's   :2       
+> sum(is.na(FluTest$ILILag2)) 
+[1] 2
+
+
+========================================================================================================================================================================
+
+Problem 5.2 - Evaluating the Time Series Model in the Test Set
+
+(2/2 points)
+In this problem, the training and testing sets are split sequentially -- the training set contains all observations from 2004-2011 and the testing set contains all observations from 2012. There is no time gap between the two datasets, meaning the first observation in FluTest was recorded one week after the last observation in FluTrain. From this, we can identify how to fill in the missing values for the ILILag2 variable in FluTest.
+
+Which value should be used to fill in the ILILag2 variable for the first observation in FluTest?
+1) The ILI value of the second-to-last observation in the FluTrain data frame. - correct  
+2) The ILI value of the last observation in the FluTrain data frame.  
+3) The ILI value of the first observation in the FluTest data frame.  
+4) The ILI value of the second observation in the FluTest data frame.
+
+
+Which value should be used to fill in the ILILag2 variable for the second observation in FluTest?
+1) The ILI value of the second-to-last observation in the FluTrain data frame.  
+2) The ILI value of the last observation in the FluTrain data frame. - correct 
+3) The ILI value of the first observation in the FluTest data frame.  
+4) The ILI value of the second observation in the FluTest data frame.
+
+
+========================================================================================================================================================================
+
+Problem 5.3 - Evaluating the Time Series Model in the Test Set
+
+(2/2 points)
+Fill in the missing values for ILILag2 in FluTest. In terms of syntax, you could set the value of ILILag2 in row "x" of the FluTest data frame to the value of ILI in row "y" of the FluTrain data frame with "FluTest$ILILag2[x] = FluTrain$ILI[y]". Use the answer to the previous questions to determine the appropriate values of "x" and "y". It may be helpful to check the total number of rows in FluTrain using str(FluTrain) or nrow(FluTrain).
+
+What is the new value of the ILILag2 variable in the first row of FluTest?
+Ans: 1.852736 - correct
+
+
+What is the new value of the ILILag2 variable in the second row of FluTest?
+Ans: 2.12413 - correct
+> FluTest$ILILag2[1] = FluTrain$ILI[416]
+> FluTest$ILILag2[2] = FluTrain$ILI[417]
+> FluTest$ILILag2[1]
+[1] 1.852736
+> FluTest$ILILag2[2]
+[1] 2.12413
+
+
+========================================================================================================================================================================
+
+Problem 5.4 - Evaluating the Time Series Model in the Test Set
+
+(2/2 points)
+Obtain test set predictions of the ILI variable from the FluTrend2 model, again remembering to call the exp() function on the result of the predict() function to obtain predictions for ILI instead of log(ILI).
+
+What is the test-set RMSE of the FluTrend2 model?
+Ans: 0.2942029 - correct
+
+> FluTrend2 = lm(log(ILI) ~ Queries + log(ILILag2), data=FluTrain)
+> FluPrediction = exp(predict(FluTrend2, newdata = FluTest))
+> SSE = sum((FluPrediction - FluTest$ILI)^2)
+> RMSE = sqrt(SSE/nrow(FluTest))
+> RMSE
+[1] 0.2942029
+
+
+
+========================================================================================================================================================================
+
+Problem 5.5 - Evaluating the Time Series Model in the Test Set
+
+(1/1 point)
+Which model obtained the best test-set RMSE?
+FluTrend1  FluTrend2 
+Ans: FluTrend2 - correct
+
+Any model should be considered better on test data if it produces less RMSE, 
+FluTrend1: 0.7490645
+FluTrend2: 0.2942029
+
+========================================================================================================================================================================
+
+
 
 ========================================================================================================================================================================
 
 
 
 
-
-
-
-
-
-
-
-
 ========================================================================================================================================================================
- 
- 
