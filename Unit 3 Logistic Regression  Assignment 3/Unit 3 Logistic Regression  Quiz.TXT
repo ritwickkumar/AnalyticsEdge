@@ -1,0 +1,331 @@
+Quick Question #1
+
+(2/2 points)
+Which of the following dependent variables are categorical? (Select all that apply.)
+1) Deciding whether to buy, sell, or hold a stock  -- Correct
+2) The weekly revenue of a company  
+3) The winner of an election with two candidates  -- Correct
+4) The day of the week with the highest revenue  -- Correct
+5) The number of daily car thefts in New York City  
+6) Whether or not revenue will exceed $50,000 -- Correct
+
+Which of the following dependent variables are binary? (Select all that apply.)
+1) Deciding whether to buy, sell, or hold a stock  
+2) The weekly revenue of a company  
+3) The winner of an election with two candidates    -- Correct
+4) The day of the week with the highest revenue  
+5) The number of car thefts in New York City  
+6) Whether or not revenue will exceed $50,000       -- Correct
+
+
+==================================================================================================================================================================
+
+Quick Question #2
+
+(3/3 points)
+Suppose the coefficients of a logistic regression model with two independent variables are as follows:
+Beta0 = -1.5, Beta1 = 3, Beta2 = -0.5
+
+And we have an observation with the following values for the independent variables:
+x1 = 1, x2 = 5
+
+What is the value of the Logit for this observation? Recall that the Logit is log(Odds).
+Ans: Using logit = Beta0 + Beta1*x1 + Beta2 * x2
+-1: correct
+ 
+What is the value of the Odds for this observation? Note that you can compute e^x, for some number x, in your R console by typing exp(x). The function exp() computes the exponential of its argument.
+Ans: exp(logit) 
+0.3678794 -  correct
+
+What is the value of P(y = 1) for this observation?
+Ans: 1 / (1 + exp (-logit))
+0.2689414 -  correct
+
+> logit = -1.5 + 3*1 + -0.5*5
+> logit
+[1] -1
+> odds = exp(logit)
+> odds
+[1] 0.3678794
+> Py1 = 1 / (1+ exp(-logit))
+> Py1
+[1] 0.2689414
+
+
+==================================================================================================================================================================
+
+Quick Question #3
+
+(1/1 point)
+In R, create a logistic regression model to predict "PoorCare" using the independent variables "StartedOnCombination" and "ProviderCount". Use the training set we created in the previous video to build the model.
+
+Note: If you haven't already loaded and split the data in R, please run these commands in your R console to load and split the data set. Remember to first navigate to the directory where you have saved "quality.csv".
+
+quality = read.csv("quality.csv")
+
+install.packages("caTools")
+
+library(caTools)
+
+set.seed(88)
+
+split = sample.split(quality$PoorCare, SplitRatio = 0.75)
+
+qualityTrain = subset(quality, split == TRUE)
+
+qualityTest = subset(quality, split == FALSE)
+
+Then recall that we built a logistic regression model to predict PoorCare using the R command:
+
+QualityLog = glm(PoorCare ~ OfficeVisits + Narcotics, data=qualityTrain, family=binomial)
+
+You will need to adjust this command to answer this question, and then look at the summary(QualityLog) output.
+
+What is the coefficient for "StartedOnCombination"?
+Ans: 1.95230 -  correct
+
+Quick Question #4
+
+(1/1 point)
+StartedOnCombination is a binary variable, which equals 1 if the patient is started on a combination of drugs to treat their diabetes, and equals 0 if the patient is not started on a combination of drugs. All else being equal, does this model imply that starting a patient on a combination of drugs is indicative of poor care, or good care?
+1) Poor Care 
+2) Poor Care - correct 
+Ans: The coefficient value is positive which makes the outcome of 1 more likely and in our case (classification where 1=Poor Care and 0=GoodCare) this corresponds to Poor Care.
+
+> quality = read.csv("quality.csv")
+> set.seed(88)
+> split = sample.split(quality$PoorCare, SplitRatio = 0.75)
+> qualityTrain = subset(quality, split == TRUE)
+> qualityTest = subset(quality, split == FALSE)
+> QualityLog = glm(PoorCare ~ OfficeVisits + Narcotics, data=qualityTrain, family=binomial)
+> QualityLog = glm(PoorCare ~ StartedOnCombination + ProviderCount, data=qualityTrain, family=binomial)
+> summary(QualityLog)
+
+Call:
+glm(formula = PoorCare ~ StartedOnCombination + ProviderCount, 
+    family = binomial, data = qualityTrain)
+
+Deviance Residuals: 
+     Min        1Q    Median        3Q       Max  
+-1.61826  -0.72782  -0.64555  -0.08407   1.94662  
+
+Coefficients:
+                         Estimate Std. Error z value Pr(>|z|)    
+(Intercept)              -2.00097    0.55097  -3.632 0.000282 ***
+StartedOnCombinationTRUE  1.95230    1.22342   1.596 0.110541    
+ProviderCount             0.03366    0.01983   1.697 0.089706 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 111.89  on 98  degrees of freedom
+Residual deviance: 104.37  on 96  degrees of freedom
+AIC: 110.37
+
+Number of Fisher Scoring iterations: 4
+
+==================================================================================================================================================================
+
+This question asks about the following two confusion matrices:
+
+Confusion(Classification) Matrix #1:
+
+ 	Predicted = 0	Predicted = 1
+Actual = 0	15	10
+Actual = 1	5	20
+ 
+
+Confusion Matrix #2:
+
+ 	Predicted = 0	Predicted = 1
+Actual = 0	20	5
+Actual = 1	10	15
+Quick Question
+
+(2/2 points)
+What is the sensitivity (true positive rate) of Confusion Matrix #1?
+Ans: 0.8 -- correct  ==> TP/(TP+FN)
+> 20/25
+[1] 0.8
+
+
+What is the specificity (true negative rate) of Confusion Matrix #1?
+Ans: 0.6 correct ==> TN/(TN+FP)
+> 15/25
+[1] 0.6
+
+
+ 		Predicted = 0		Predicted = 1
+Actual = 0	True Negative(TN)	False Positive(FP)
+Actual = 1	False Negative(FN)	True Positive(TP)
+
+TP = True Positive
+FP = False Positive
+TN = True Negative
+FN = False Negative
+N = Number of observations
+Overall Accuracy = (TN+TP)/N
+Overall Error Rate = (FN+FP)/N
+sensitivity (true positive rate) = TP/(TP+FN)  ==> TP + FN is the total number of poor quality care where FN is something we couldn't predict correctly
+False negative error rate = FN/(TP+FN)
+specificity (true negative rate) = TN/(TN+FP) ==>  ==> TN + FP is the total number of good quality care where FP is something we couldn't predict correctly
+False positive error rate = FP/(TN+FP)
+false positive rate = 1-specificity
+false negative rate = 1-sensitivity
+
+
+Quick Question
+
+(1/1 point)
+To go from Confusion Matrix #1 to Confusion Matrix #2, did we increase or decrease the threshold value?
+We increased the threshold value. 
+We increased the threshold value. - correct  We decreased the threshold value.
+Ans: Increasing the threshold, makes sensitivity go down and specificity go up conversely with the lower threshold, the sensitivity goes up and the specificity goes down ie specificity is directly proportional to threshold whereas sensitivity is inversely proportional to the threshold
+
+Formula:
+predictTrain = predict(QualityLog, type="response") #type="response" gives us probabilities
+tapply(predictTrain, qualityTrain$PoorCare, mean) #avg prediction for each of the TRUE outcomes
+table(qualityTrain$PoorCare, predictTrain > 0.5) #first arg is for the rows(true coutcomes) and second arg is for the col labelling(predicted outcomes)
+
+0.5 in the above command is the threshold value.
+
+
+==================================================================================================================================================================
+
+This question will ask about the following ROC curve: 
+Quick Question
+
+(2/2 points)
+Given this ROC curve, which threshold would you pick if you wanted to correctly identify a small group of patients who are receiving the worst care with high confidence?
+1) t = 0.2  
+2) t = 0.3  
+3) t = 0.7 - correct  
+4) t = 0.8
+EXPLANATION:The threshold 0.7 is best to identify a small group of patients who are receiving the worst care with high confidence, since at this threshold we make very few false positive mistakes, and identify about 35% of the true positives. The threshold t = 0.8 is not a good choice, since it makes about the same number of false positives, but only identifies 10% of the true positives. The thresholds 0.2 and 0.3 both identify more of the true positives, but they make more false positive mistakes, so our confidence decreases.
+
+
+Which threshold would you pick if you wanted to correctly identify half of the patients receiving poor care, while making as few errors as possible?
+1) t = 0.2  
+2) t = 0.3 
+3) t = 0.3 - correct  
+4) t = 0.8
+EXPLANATION:The threshold 0.3 is the best choice in this scenerio. The threshold 0.2 also identifies over half of the patients receiving poor care, but it makes many more false positive mistakes. The thresholds 0.7 and 0.8 don’t identify at least half of the patients receiving poor care.
+
+
+==================================================================================================================================================================
+
+
+==================================================================================================================================================================
+
+
+
+
+
+==================================================================================================================================================================
+
+
+
+
+==================================================================================================================================================================
+
+
+
+
+==================================================================================================================================================================
+
+
+
+==================================================================================================================================================================
+
+
+==================================================================================================================================================================
+
+
+
+
+
+==================================================================================================================================================================
+
+
+
+
+==================================================================================================================================================================
+
+
+
+
+==================================================================================================================================================================
+
+
+
+==================================================================================================================================================================
+
+
+==================================================================================================================================================================
+
+
+
+
+
+==================================================================================================================================================================
+
+
+
+
+==================================================================================================================================================================
+
+
+
+
+==================================================================================================================================================================
+
+
+
+==================================================================================================================================================================
+
+
+==================================================================================================================================================================
+
+
+
+
+
+==================================================================================================================================================================
+
+
+
+
+==================================================================================================================================================================
+
+
+
+
+==================================================================================================================================================================
+
+
+
+==================================================================================================================================================================
+
+
+==================================================================================================================================================================
+
+
+
+
+
+==================================================================================================================================================================
+
+
+
+
+==================================================================================================================================================================
+
+
+
+
+==================================================================================================================================================================
+
+
+
+==================================================================================================================================================================
